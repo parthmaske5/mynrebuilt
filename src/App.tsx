@@ -1,86 +1,32 @@
 import { useState, useEffect } from 'react';
-import { Header } from '@/components/Header';
-import { Hero } from '@/components/Hero';
-import { Capabilities } from '@/components/Capabilities';
-import { ProofOfWork } from '@/components/ProofOfWork';
-import { About } from '@/components/About';
-import { OurCrew } from '@/components/OurCrew';
-import { ContactSection } from '@/components/ContactSection';
-import { Footer } from '@/components/Footer';
-import { MobileBottomBar } from '@/components/MobileBottomBar';
+import { RepairHome } from '@/pages/RepairHome';
 import { OurCrewPage } from '@/pages/OurCrewPage';
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
-
   useEffect(() => {
-    const handlePopState = () => {
-      setCurrentPath(window.location.pathname);
+    const onPopState = () => setCurrentPath(window.location.pathname);
+    const onClick = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const anchor = (event.target as Element).closest('a');
+      if (!anchor || anchor.target || anchor.hasAttribute('download')) return;
+      const url = new URL(anchor.href, window.location.href);
+      if (url.origin !== window.location.origin || !['/', '/our-crew'].includes(url.pathname)) return;
+      if (url.pathname === window.location.pathname && url.hash) return;
+      event.preventDefault();
+      window.history.pushState({}, '', url.pathname + url.hash);
+      setCurrentPath(url.pathname);
+      if (url.hash) {
+        requestAnimationFrame(() => requestAnimationFrame(() => document.getElementById(decodeURIComponent(url.hash.slice(1)))?.scrollIntoView()));
+      } else window.scrollTo(0, 0);
     };
-
-    window.addEventListener('popstate', handlePopState);
-
-    // Intercept client-side link clicks for seamless SPA navigation
-    const handleDocumentClick = (e: MouseEvent) => {
-      const anchor = (e.target as HTMLElement).closest('a');
-      if (!anchor) return;
-
-      const href = anchor.getAttribute('href');
-      if (!href) return;
-
-      // Handle internal routes
-      if (href.endsWith('/our-crew') || href === '/our-crew') {
-        e.preventDefault();
-        window.history.pushState({}, '', href);
-        setCurrentPath(href);
-        window.scrollTo({ top: 0, behavior: 'instant' });
-      } else if (href === '/' || href.endsWith('/')) {
-        e.preventDefault();
-        window.history.pushState({}, '', href);
-        setCurrentPath(href);
-        window.scrollTo({ top: 0, behavior: 'instant' });
-      } else if (href.includes('/#')) {
-        e.preventDefault();
-        const hash = href.substring(href.indexOf('/#') + 1);
-        window.history.pushState({}, '', href);
-        setCurrentPath(href.split('/#')[0] || '/');
-        // Allow DOM to update then scroll
-        setTimeout(() => {
-          const el = document.querySelector(hash);
-          if (el) {
-            el.scrollIntoView({ behavior: 'smooth' });
-          }
-        }, 50);
-      }
-    };
-
-    document.addEventListener('click', handleDocumentClick);
-
+    window.addEventListener('popstate', onPopState);
+    document.addEventListener('click', onClick);
     return () => {
-      window.removeEventListener('popstate', handlePopState);
-      document.removeEventListener('click', handleDocumentClick);
+      window.removeEventListener('popstate', onPopState);
+      document.removeEventListener('click', onClick);
     };
   }, []);
-
-  if (currentPath.endsWith('/our-crew') || currentPath.includes('/our-crew')) {
-    return <OurCrewPage />;
-  }
-
-  return (
-    <div className="min-h-screen bg-cream-50 flex flex-col">
-      <Header currentPath="/" />
-      <main className="flex-grow">
-        <Hero />
-        <Capabilities />
-        <ProofOfWork />
-        <About />
-        <OurCrew />
-        <ContactSection />
-      </main>
-      <Footer currentPath="/" />
-      <MobileBottomBar />
-    </div>
-  );
+  return currentPath === '/our-crew' ? <OurCrewPage /> : <RepairHome />;
 }
-
 export default App;
