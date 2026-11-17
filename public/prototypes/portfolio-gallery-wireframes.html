@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Portfolio Two-Column Gallery Wireframes (prototype)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --cream-50: #FBF8F4; --cream-100: #F7F2EB; --cream-200: #EFE7D8; --cream-300: #E4D6C0;
+    --ink-900: #1A1A1A; --ink-700: #3D3D3D; --ink-600: #525252; --ink-500: #6B6B6B;
+    --marigold-500: #F59E0B; --marigold-100: #FFEDCC; --marigold-800: #92480C;
+    --sage-500: #6B7C56; --sage-700: #424E36; --sage-100: #E6EAE0;
+    --blueprint-600: #2D5570; --blueprint-100: #D1DEE9;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--cream-50); color: var(--ink-900); font-family: Inter, system-ui, sans-serif; line-height: 1.5; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 48px 24px 96px; }
+  .intro h1 { font-family: Fraunces, Georgia, serif; font-weight: 500; font-size: clamp(28px, 4vw, 40px); letter-spacing: -0.03em; line-height: 1.2; margin: 0 0 8px; }
+  .intro p { margin: 0; color: var(--ink-600); max-width: 68ch; }
+
+  .option { margin-top: 64px; }
+  .option-label { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--sage-700); background: var(--sage-100); padding: 6px 12px; border-radius: 999px; }
+  .option h2 { font-family: Fraunces, Georgia, serif; font-weight: 500; font-size: 24px; margin: 12px 0 4px; }
+  .option .why { margin: 0 0 24px; color: var(--ink-600); font-size: 14px; max-width: 70ch; }
+
+  .galleries { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; background: var(--cream-100); border: 1px solid var(--cream-300); border-radius: 20px; padding: 32px; }
+  .column { min-width: 0; }
+  .column + .column { border-left: 1px dashed var(--cream-300); padding-left: 32px; }
+  .col-head { margin-bottom: 20px; }
+  .col-kicker { font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--blueprint-600); }
+  .col-head h3 { font-family: Fraunces, Georgia, serif; font-weight: 500; font-size: 26px; line-height: 1.2; margin: 4px 0 8px; letter-spacing: -0.02em; }
+  .col-head p { margin: 0; color: var(--ink-600); font-size: 14px; }
+  .view-all { display: inline-flex; align-items: center; gap: 6px; margin-top: 16px; font-size: 14px; font-weight: 600; color: var(--ink-900); text-decoration: none; border-bottom: 1.5px solid var(--marigold-500); padding-bottom: 2px; }
+  .view-all:hover { color: var(--marigold-800); }
+
+  .card { position: relative; display: block; background: #fff; border-radius: 16px; overflow: hidden; text-decoration: none; color: inherit; box-shadow: 0 1px 2px rgba(26,26,26,.06), 0 6px 18px rgba(26,26,26,.06); transition: transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s; animation: rise .7s ease both; }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 2px 4px rgba(26,26,26,.08), 0 16px 32px rgba(26,26,26,.12); }
+  .card .img { position: relative; overflow: hidden; background: var(--cream-200); }
+  .card .img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 1.2s cubic-bezier(.2,.7,.2,1), filter .8s; }
+  .card:hover .img img { transform: scale(1.06); }
+  .card .img::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(26,26,26,.55), transparent 55%); opacity: 0; transition: opacity .5s; }
+  .card:hover .img::after { opacity: 1; }
+  .card .cta { position: absolute; left: 16px; right: 16px; bottom: 14px; z-index: 2; color: var(--cream-50); font-size: 13px; font-weight: 600; opacity: 0; transform: translateY(8px); transition: opacity .4s, transform .4s; }
+  .card:hover .cta { opacity: 1; transform: translateY(0); }
+  .ph { position: absolute; top: 10px; left: 10px; z-index: 2; background: rgba(251,248,244,.94); color: var(--marigold-800); font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; }
+  .tag { position: absolute; top: 10px; right: 10px; z-index: 2; background: rgba(26,26,26,.7); color: var(--cream-50); font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 999px; }
+  .card .body { padding: 14px 16px 16px; }
+  .card h4 { font-family: Fraunces, Georgia, serif; font-weight: 500; font-size: 17px; line-height: 1.25; margin: 0 0 4px; }
+  .card p { margin: 0; font-size: 13px; color: var(--ink-600); }
+  .card .meta { margin-top: 8px; font-size: 12px; color: var(--sage-700); font-weight: 600; }
+
+  .major .card .img { aspect-ratio: 4 / 3; }
+  .major .card.feature .img { aspect-ratio: 16 / 10; }
+  .small .card .img { aspect-ratio: 1 / 1; }
+  .small .card .body { padding: 12px 14px 14px; }
+  .small .card h4 { font-size: 15px; }
+  .small .card p { font-size: 12px; }
+
+  .grid-major { display: grid; grid-template-columns: 1fr; gap: 24px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .list-small { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  .list-row { display: grid; grid-template-columns: 112px 1fr; gap: 16px; align-items: center; }
+  .list-row .img { aspect-ratio: 1 / 1; border-radius: 12px; overflow: hidden; position: relative; }
+  .list-row .img img { width: 100%; height: 100%; object-fit: cover; }
+
+  .stacked-major .card .img { aspect-ratio: 16 / 9; }
+  .stacked-major .card .body { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: end; }
+
+  .scroll-col { max-height: 880px; overflow-y: auto; padding-right: 8px; scrollbar-width: thin; scrollbar-color: var(--cream-300) transparent; }
+
+  .note { margin-top: 24px; font-size: 13px; color: var(--ink-600); background: var(--marigold-100); border-radius: 12px; padding: 12px 16px; }
+
+  @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+  .card:nth-child(1) { animation-delay: .05s; } .card:nth-child(2) { animation-delay: .12s; }
+  .card:nth-child(3) { animation-delay: .19s; } .card:nth-child(4) { animation-delay: .26s; }
+  .card:nth-child(5) { animation-delay: .33s; } .card:nth-child(6) { animation-delay: .4s; }
+  .card:nth-child(7) { animation-delay: .47s; } .card:nth-child(8) { animation-delay: .54s; }
+
+  @media (max-width: 900px) {
+    .galleries { grid-template-columns: 1fr; padding: 24px; }
+    .column + .column { border-left: 0; padding-left: 0; border-top: 1px dashed var(--cream-300); padding-top: 32px; }
+    .scroll-col { max-height: none; overflow: visible; }
+  }
+  @media (max-width: 520px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .wrap { padding: 32px 16px 64px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="intro">
+    <h1>Portfolio: two independent galleries</h1>
+    <p>Three layout options for the two-column portfolio. Every card carries a photograph. Images marked PLACEHOLDER are stand-ins from the existing site and are not real completed projects. Titles and tags come from the current project list. Short descriptions are marked as placeholders until you supply the copy.</p>
+  </header>
+
+  <!-- OPTION A -->
+  <section class="option">
+    <span class="option-label">Option A</span>
+    <h2>Editorial Masonry</h2>
+    <p class="why">Major Works lead with one large feature photo, then a staggered 2-up grid of tall-ish cards. Small Works use a tight square grid that reads as a quick, organised catalogue.</p>
+    <div class="galleries">
+      <div class="column major">
+        <div class="col-head">
+          <div class="col-kicker">Major Works</div>
+          <h3>Construction &amp; Renovation</h3>
+          <p>Full builds, renovations and structural projects, from first plans to handover.</p>
+        </div>
+        <div class="grid-major">
+          <a class="card feature" href="#">
+            <div class="img"><span class="ph">Placeholder</span><span class="tag">Renovation</span><img src="https://images.pexels.com/photos/5505931/pexels-photo-5505931.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Office renovation" /><span class="cta">View project &rarr;</span></div>
+            <div class="body"><h4>Office Renovation</h4><p>[Short description]</p><div class="meta">Renovation &middot; Construction</div></div>
+          </a>
+          <div class="grid-2">
+            <a class="card" href="#"><div class="img"><span class="ph">Placeholder</span><img src="https://images.pexels.com/photos/31197870/pexels-photo-31197870.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Full house construction" /><span class="cta">View project &rarr;</span></div><div class="body"><h4>Full House Construction</h4><p>[Short description]</p></div></a>
+            <a class="card" href="#"><div class="img"><span class="ph">Placeholder</span><img src="https://images.pexels.com/photos/34524716/pexels-photo-34524716.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Roof replacement" /><span class="cta">View project &rarr;</span></div><div class="body"><h4>Roof Replacement</h4><p>[Short description]</p></div></a>
+            <a class="card" href="#"><div class="img"><span class="ph">Placeholder</span><img src="https://images.pexels.com/photos/8146144/pexels-photo-8146144.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Kitchen renovation" /><span class="cta">View project &rarr;</span></div><div class="body"><h4>Kitchen Renovation</h4><p>[Short description]</p></div></a>
+            <a class="card" href="#"><div class="img"><span class="ph">Placeholder</span><img src="https://images.pexels.com/photos/17290735/pexels-photo-17290735.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="House extension" /><span class="cta">View project &rarr;</span></div><div class="body"><h4>House Extensions</h4><p>[Short description]</p></div></a>
+          </div>
+        </div>
+        <a class="view-all" href="#">View all Major Works &rarr;</a>
+      </div>
+
+      <div class="column small">
+        <div class="col-head">
+          <div class="col-kicker">Small Works</div>
+          <h3>Repairs &amp; Maintenance</h3>
+          <p>Quick fixes and everyday maintenance, handled by one team.</p>
+        </div>
+        <div class="grid-2">
+          <a class="card" href="#"><div class="img"><span class="ph">Placeholder</span><img src="https://images.pexels.com/photos/19866415/pexels-photo-19866415.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Plumbing repair" /><span class="cta">Enquire &rarr;</span></div><div class="body"><h4>Plumbing Repairs</h4><p>[Short description]</p></div></a>
+          <a class="card" href="#"><div class="img"><span class="ph">Placeholder</span><img src="https://images.pexels.com/photos/32998547/pexels-photo-32998547.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Water leakage repair" /><span class="cta">Enquire &rarr;</span></div><div class="body"><h4>Water Leakage</h4><p>[Short description]</p></div></a>
+          <a class="card" href="#"><div class="img"><span class="ph">Placeholder</span><img src="https://images.pexels.com/photos/3614763/pexels-photo-3614763.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Electrical repair" /><span class="cta">Enquire &rarr;</span></div><div class="body"><h4>Electrical Work</h4><p>[Short description]</p></div></a>
+          <a class="card" href="#"><div class="img"><span class="ph">Placeholder</span><img src="https://images.pexels.com/photos/5691502/pexels-photo-5691502.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Door repair" /><span class="cta">Enquire &rarr;</span></div><div class="body"><h4>Door &amp; Lock Repairs</h4><p>[Short description]</p></div></a>
+          <a class="card" href="#"><div class="img"><span class="ph">Placeholder</span><img src="https://images.pexels.com/photos/34938442/pexels-photo-34938442.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Tap and pipe replacement" /><span class="cta">Enquire &rarr;</span></div><div class="body"><h4>Tap &amp; Pipe Replacement</h4><p>[Short description]</p></div></a>
+          <a class="card" href="#"><div class="img"><span class="ph">Placeholder</span><img src="https://images.pexels.com/photos/6764270/pexels-photo-6764270.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Minor painting" /><span class="cta">Enquire &rarr;</span></div><div class="body"><h4>Minor Painting</h4><p>[Short description]</p></div></a>
+        </div>
+        <a class="view-all" href="#">View all Small Works &rarr;</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- OPTION B -->
+  <section class="option">
+    <span class="option-label">Option B</span>
+    <h2>Stacked Rows</h2>
+    <p class="why">Major Works become a vertical run of wide, cinematic cards with the description beside the photo. Small Works become compact list rows with a thumbnail, which is faster to scan and suits a longer list.</p>
+    <div class="galleries">
+      <div class="column major stacked-major">
+        <div class="col-head">
+          <div class="col-kicker">Major Works</div>
+          <h3>Construction &amp; Renovation</h3>
+          <p>Full builds, renovations and structural projects, from first plans to handover.</p>
+        </div>
+        <div class="grid-major scroll-col">
+          <a class="card" href="#"><div class="img"><span class="ph">Placeholder</span><span class="tag">Renovation</span><img src="https://images.pexels.com/photos/5505931/pexels-photo-5505931.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Office renovation" /><span class="cta">View project &rarr;</span></div><div class="body"><div><h4>Office Renovation</h4><p>[Short description]</p></div></div></a>
+          <a class="card" href="#"><div class="img"><span class="ph">Placeholder</span><span class="tag">Construction</span><img src="https://images.pexels.com/photos/31197870/pexels-photo-31197870.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Full house construction" /><span class="cta">View project &rarr;</span></div><div class="body"><div><h4>Full House Construction</h4><p>[Short description]</p></div></div></a>
+          <a class="card" href="#"><div class="img"><span class="ph">Placeholder</span><span class="tag">Roofing</span><img src="https://images.pexels.com/photos/34524716/pexels-photo-34524716.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Roof replacement" /><span class="cta">View project &rarr;</span></div><div class="body"><div><h4>Roof Replacement</h4><p>[Short description]</p></div></div></a>
+          <a class="card" href="#"><div class="img"><span class="ph">Placeholder</span><span class="tag">Renovation</span><img src="https://images.pexels.com/photos/8146144/pexels-photo-8146144.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Kitchen renovation" /><span class="cta">View project &rarr;</span></div><div class="body"><div><h4>Kitchen Renovation</h4><p>[Short description]</p></div></div></a>
+        </div>
+        <a class="view-all" href="#">View all Major Works &rarr;</a>
+      </div>
+
+      <div class="column small">
+        <div class="col-head">
+          <div class="col-kicker">Small Works</div>
+          <h3>Repairs &amp; Maintenance</h3>
+          <p>Quick fixes and everyday maintenance, handled by one team.</p>
+        </div>
+        <div class="list-small scroll-col">
+          <a class="card list-row" href="#"><div class="img"><span class="ph" style="font-size:9px;padding:2px 6px">Placeholder</span><img src="https://images.pexels.com/photos/19866415/pexels-photo-19866415.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Plumbing repair" /></div><div class="body"><h4>Plumbing Repairs</h4><p>[Short description]</p></div></a>
+          <a class="card list-row" href="#"><div class="img"><span class="ph" style="font-size:9px;padding:2px 6px">Placeholder</span><img src="https://images.pexels.com/photos/32998547/pexels-photo-32998547.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Water leakage repair" /></div><div class="body"><h4>Water Leakage</h4><p>[Short description]</p></div></a>
+          <a class="card list-row" href="#"><div class="img"><span class="ph" style="font-size:9px;padding:2px 6px">Placeholder</span><img src="https://images.pexels.com/photos/3614763/pexels-photo-3614763.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Electrical repair" /></div><div class="body"><h4>Electrical Work</h4><p>[Short description]</p></div></a>
+          <a class="card list-row" href="#"><div class="img"><span class="ph" style="font-size:9px;padding:2px 6px">Placeholder</span><img src="https://images.pexels.com/photos/5691502/pexels-photo-5691502.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Door repair" /></div><div class="body"><h4>Door &amp; Lock Repairs</h4><p>[Short description]</p></div></a>
+        </div>
+        <a class="view-all" href="#">View all Small Works &rarr;</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- OPTION C -->
+  <section class="option">
+    <span class="option-label">Option C</span>
+    <h2>Split Showcase with Scrolling Columns</h2>
+    <p class="why">Each column scrolls on its own, so visitors can browse Major Works and Small Works independently. Major cards use one consistent 4:3 frame and Small cards use a 1:1 frame, which keeps the two galleries visually distinct but related.</p>
+    <div class="galleries">
+      <div class="column major">
+        <div class="col-head">
+          <div class="col-kicker">Major Works</div>
+          <h3>Construction &amp; Renovation</h3>
+          <p>Full builds, renovations and structural projects, from first plans to handover.</p>
+        </div>
+        <div class="grid-major scroll-col">
+          <a class="card" href="#"><div class="img"><span class="ph">Placeholder</span><img src="https://images.pexels.com/photos/5505931/pexels-photo-5505931.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Office renovation" /><span class="cta">View project &rarr;</span></div><div class="body"><h4>Office Renovation</h4><p>[Short description]</p></div></a>
+          <a class="card" href="#"><div class="img"><span class="ph">Placeholder</span><img src="https://images.pexels.com/photos/31197870/pexels-photo-31197870.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Full house construction" /><span class="cta">View project &rarr;</span></div><div class="body"><h4>Full House Construction</h4><p>[Short description]</p></div></a>
+          <a class="card" href="#"><div class="img"><span class="ph">Placeholder</span><img src="https://images.pexels.com/photos/34524716/pexels-photo-34524716.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Roof replacement" /><span class="cta">View project &rarr;</span></div><div class="body"><h4>Roof Replacement</h4><p>[Short description]</p></div></a>
+          <a class="card" href="#"><div class="img"><span class="ph">Placeholder</span><img src="https://images.pexels.com/photos/31608473/pexels-photo-31608473.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Flooring and painting" /><span class="cta">View project &rarr;</span></div><div class="body"><h4>Flooring &amp; Painting</h4><p>[Short description]</p></div></a>
+          <a class="card" href="#"><div class="img"><span class="ph">Placeholder</span><img src="https://images.pexels.com/photos/17290735/pexels-photo-17290735.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="House extension" /><span class="cta">View project &rarr;</span></div><div class="body"><h4>House Extensions</h4><p>[Short description]</p></div></a>
+        </div>
+        <a class="view-all" href="#">View all Major Works &rarr;</a>
+      </div>
+
+      <div class="column small">
+        <div class="col-head">
+          <div class="col-kicker">Small Works</div>
+          <h3>Repairs &amp; Maintenance</h3>
+          <p>Quick fixes and everyday maintenance, handled by one team.</p>
+        </div>
+        <div class="grid-2 scroll-col">
+          <a class="card" href="#"><div class="img"><span class="ph">Placeholder</span><img src="https://images.pexels.com/photos/19866415/pexels-photo-19866415.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Plumbing repair" /><span class="cta">Enquire &rarr;</span></div><div class="body"><h4>Plumbing Repairs</h4><p>[Short description]</p></div></a>
+          <a class="card" href="#"><div class="img"><span class="ph">Placeholder</span><img src="https://images.pexels.com/photos/32998547/pexels-photo-32998547.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Water leakage repair" /><span class="cta">Enquire &rarr;</span></div><div class="body"><h4>Water Leakage</h4><p>[Short description]</p></div></a>
+          <a class="card" href="#"><div class="img"><span class="ph">Placeholder</span><img src="https://images.pexels.com/photos/3614763/pexels-photo-3614763.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Electrical repair" /><span class="cta">Enquire &rarr;</span></div><div class="body"><h4>Electrical Work</h4><p>[Short description]</p></div></a>
+          <a class="card" href="#"><div class="img"><span class="ph">Placeholder</span><img src="https://images.pexels.com/photos/5691502/pexels-photo-5691502.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Door repair" /><span class="cta">Enquire &rarr;</span></div><div class="body"><h4>Door &amp; Lock Repairs</h4><p>[Short description]</p></div></a>
+          <a class="card" href="#"><div class="img"><span class="ph">Placeholder</span><img src="https://images.pexels.com/photos/34938442/pexels-photo-34938442.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Tap and pipe replacement" /><span class="cta">Enquire &rarr;</span></div><div class="body"><h4>Tap &amp; Pipe Replacement</h4><p>[Short description]</p></div></a>
+          <a class="card" href="#"><div class="img"><span class="ph">Placeholder</span><img src="https://images.pexels.com/photos/6764270/pexels-photo-6764270.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Minor painting" /><span class="cta">Enquire &rarr;</span></div><div class="body"><h4>Minor Painting</h4><p>[Short description]</p></div></a>
+        </div>
+        <a class="view-all" href="#">View all Small Works &rarr;</a>
+      </div>
+    </div>
+  </section>
+
+  <p class="note">Mobile: both columns stack, with Major Works first and Small Works second. Tablet keeps two columns where space allows. Scroll areas only apply on desktop.</p>
+</div>
+</body>
+</html>

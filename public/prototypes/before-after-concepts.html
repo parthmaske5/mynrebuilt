@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Before / After Concepts (prototype)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  @property --pos { syntax: '<percentage>'; inherits: true; initial-value: 50%; }
+
+  :root {
+    --cream-50: #FBF8F4; --cream-200: #EFE7D8; --ink-900: #1A1A1A; --ink-600: #525252;
+    --marigold-500: #F59E0B; --marigold-600: #D97D06; --sage-600: #546344;
+    --ease: cubic-bezier(.65,0,.35,1);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--cream-50); color: var(--ink-900); font-family: Inter, system-ui, sans-serif; line-height: 1.5; }
+  header { max-width: 1200px; margin: 0 auto; padding: 48px 24px 16px; }
+  header h1 { font-family: Fraunces, Georgia, serif; font-weight: 500; font-size: clamp(28px, 4vw, 40px); line-height: 1.2; margin: 0 0 8px; letter-spacing: -0.03em; }
+  header p { margin: 0; color: var(--ink-600); max-width: 64ch; }
+  main { max-width: 1200px; margin: 0 auto; padding: 24px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 32px; }
+
+  .card { background: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 1px 2px rgba(26,26,26,.06), 0 8px 24px rgba(26,26,26,.06); }
+  .meta { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 16px 8px 4px; }
+  .meta h2 { font-family: Fraunces, Georgia, serif; font-size: 20px; font-weight: 500; margin: 0; }
+  .meta span.num { font-size: 12px; color: var(--sage-600); font-weight: 600; letter-spacing: .08em; }
+  .meta-desc { padding: 0 8px 8px; margin: 0; font-size: 14px; color: var(--ink-600); }
+
+  .frame { position: relative; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 12px; background: var(--cream-200); cursor: pointer; user-select: none; isolation: isolate; }
+  .layer { position: absolute; inset: 0; }
+  .layer img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .category { position: absolute; top: 12px; left: 12px; z-index: 5; background: rgba(251,248,244,.92); color: var(--ink-900); font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; }
+
+  .indicator { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); z-index: 6; display: inline-flex; background: rgba(26,26,26,.55); backdrop-filter: blur(6px); border-radius: 999px; padding: 3px; }
+  .indicator button { all: unset; cursor: pointer; font-size: 12px; font-weight: 600; letter-spacing: .06em; padding: 6px 14px; border-radius: 999px; color: rgba(251,248,244,.8); transition: background .3s, color .3s; }
+  .indicator button[aria-pressed="true"] { background: var(--cream-50); color: var(--ink-900); }
+  .indicator button:focus-visible { outline: 2px solid var(--marigold-500); outline-offset: 2px; }
+
+  .auto-bar { position: absolute; left: 0; bottom: 0; height: 3px; background: var(--marigold-500); width: 0; z-index: 6; }
+
+  /* 1. Split reveal */
+  .split .layer-before { clip-path: inset(0 calc(100% - var(--pos)) 0 0); transition: --pos .9s var(--ease); z-index: 2; }
+  .split .divider { position: absolute; top: 0; bottom: 0; left: var(--pos); width: 2px; background: #fff; z-index: 3; transform: translateX(-1px); box-shadow: 0 0 12px rgba(0,0,0,.25); transition: left .9s var(--ease); }
+  .split .divider::after { content: ""; position: absolute; top: 50%; left: 50%; width: 30px; height: 30px; margin: -15px; border-radius: 50%; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.2); }
+  .split.idle .layer-before { --pos: 50%; animation: split-sweep 6s var(--ease) infinite alternate; }
+  .split.idle .divider { animation: split-sweep-line 6s var(--ease) infinite alternate; }
+  .split:hover.idle .layer-before, .split:hover.idle .divider { animation-play-state: paused; }
+  @keyframes split-sweep { from { --pos: 30%; } to { --pos: 70%; } }
+  @keyframes split-sweep-line { from { left: 30%; } to { left: 70%; } }
+  .split[data-state="before"]:not(.idle) .layer-before { --pos: 100%; }
+  .split[data-state="after"]:not(.idle) .layer-before { --pos: 0%; }
+  .split[data-state="after"]:not(.idle) .divider { left: 0%; }
+  .split[data-state="before"]:not(.idle) .divider { left: 100%; }
+
+  /* 2. Crossfade */
+  .crossfade .layer { transition: opacity 1s ease; }
+  .crossfade .layer-before { opacity: 1; }
+  .crossfade .layer-after { opacity: 0; }
+  .crossfade[data-state="after"] .layer-before { opacity: 0; }
+  .crossfade[data-state="after"] .layer-after { opacity: 1; }
+
+  /* 3. Wipe reveal */
+  .wipe .layer-after { clip-path: polygon(0 0, 0 0, 0 100%, 0 100%); transition: clip-path 1.1s var(--ease); }
+  .wipe[data-state="after"] .layer-after { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+  .wipe .edge { position: absolute; top: 0; bottom: 0; width: 4px; left: 0; background: linear-gradient(to bottom, transparent, #fff 20%, #fff 80%, transparent); z-index: 4; transition: left 1.1s var(--ease), opacity .4s; opacity: 0; }
+  .wipe[data-state="after"] .edge { left: calc(100% - 4px); }
+  .wipe.moving .edge { opacity: 1; }
+
+  /* 4. Vertical flip */
+  .flip-scene { position: absolute; inset: 0; perspective: 1400px; }
+  .flip-inner { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform 1s var(--ease); }
+  .flip[data-state="after"] .flip-inner { transform: rotateX(180deg); }
+  .flip .face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+  .flip .face-back { transform: rotateX(180deg); }
+
+  /* 5. Zoom transition */
+  .zoom .layer-before { transition: transform 1.2s var(--ease), opacity 1.2s var(--ease); transform: scale(1); opacity: 1; }
+  .zoom .layer-after { transition: transform 1.2s var(--ease), opacity 1.2s var(--ease); transform: scale(1.18); opacity: 0; }
+  .zoom[data-state="after"] .layer-before { transform: scale(1.18); opacity: 0; }
+  .zoom[data-state="after"] .layer-after { transform: scale(1); opacity: 1; }
+
+  /* 6. Auto slideshow */
+  .slides .layer { transition: transform 1s var(--ease), opacity 1s ease; }
+  .slides .layer-before { transform: translateX(0); }
+  .slides .layer-after { transform: translateX(100%); }
+  .slides[data-state="after"] .layer-before { transform: translateX(-100%); }
+  .slides[data-state="after"] .layer-after { transform: translateX(0); }
+  .slides .layer img { transform: scale(1.05); transition: transform 6s linear; }
+  .slides .layer.active img { transform: scale(1.12); }
+
+  .hint { font-size: 12px; color: var(--ink-600); padding: 0 8px; margin: 8px 0 0; }
+
+  @media (max-width: 640px) {
+    main { padding: 16px; gap: 24px; grid-template-columns: 1fr; }
+    header { padding-top: 32px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; }
+    .split .divider, .wipe .edge { display: none; }
+    .split .layer-before { --pos: 50%; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Before &amp; After: six interaction concepts</h1>
+  <p>Every concept uses the same real before/after pair (Office Renovation). Click or tap any image, or use the BEFORE / AFTER switch, to compare. Concepts marked "auto" also move on their own and pause on hover.</p>
+</header>
+
+<main id="grid"></main>
+
+<template id="frame-tpl">
+  <div class="frame">
+    <span class="category">Renovation</span>
+    <div class="scene"></div>
+    <div class="indicator" role="group" aria-label="Show before or after">
+      <button type="button" data-set="before" aria-pressed="true">BEFORE</button>
+      <button type="button" data-set="after" aria-pressed="false">AFTER</button>
+    </div>
+  </div>
+</template>
+
+<script>
+const BEFORE = 'https://images.pexels.com/photos/14840813/pexels-photo-14840813.jpeg?auto=compress&cs=tinysrgb&h=650&w=940';
+const AFTER = 'https://images.pexels.com/photos/5505931/pexels-photo-5505931.jpeg?auto=compress&cs=tinysrgb&h=650&w=940';
+
+const concepts = [
+  { id: 'split', n: '01', title: 'Split Reveal', desc: 'A divider sweeps gently across the photo on its own. Tap to snap it to either side.', auto: false, build: 'split' },
+  { id: 'crossfade', n: '02', title: 'Crossfade', desc: 'The two photos dissolve into each other slowly, like a single frame changing over time.', auto: true, build: 'layers' },
+  { id: 'wipe', n: '03', title: 'Wipe Reveal', desc: 'A soft edge sweeps across the frame and uncovers the finished space.', auto: false, build: 'layers' },
+  { id: 'flip', n: '04', title: 'Vertical Flip', desc: 'The frame turns over on its horizontal axis, like flipping a photo print.', auto: false, build: 'flip' },
+  { id: 'zoom', n: '05', title: 'Zoom Transition', desc: 'The old room pulls back and fades while the finished room settles in from close up.', auto: false, build: 'layers' },
+  { id: 'slides', n: '06', title: 'Auto Slideshow', desc: 'Slides glide sideways on a steady timer with a progress line. Hover pauses it.', auto: true, build: 'layers' },
+];
+
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function img(src, alt) {
+  return `<img src="${src}" alt="${alt}" draggable="false" loading="lazy" />`;
+}
+
+function buildScene(c) {
+  if (c.build === 'split') {
+    return `<div class="layer layer-after">${img(AFTER, 'Office after renovation')}</div>
+      <div class="layer layer-before">${img(BEFORE, 'Office before renovation')}</div>
+      <div class="divider"></div>`;
+  }
+  if (c.build === 'flip') {
+    return `<div class="flip-scene"><div class="flip-inner">
+      <div class="face">${img(BEFORE, 'Office before renovation')}</div>
+      <div class="face face-back">${img(AFTER, 'Office after renovation')}</div>
+    </div></div>`;
+  }
+  const extra = c.id === 'wipe' ? '<div class="edge"></div>' : '';
+  const bar = c.id === 'slides' ? '<div class="auto-bar"></div>' : '';
+  return `<div class="layer layer-before">${img(BEFORE, 'Office before renovation')}</div>
+    <div class="layer layer-after">${img(AFTER, 'Office after renovation')}</div>${extra}${bar}`;
+}
+
+const grid = document.getElementById('grid');
+const tpl = document.getElementById('frame-tpl');
+const timers = [];
+
+concepts.forEach((c) => {
+  const card = document.createElement('article');
+  card.className = 'card';
+  card.innerHTML = `<div class="meta"><h2>${c.title}</h2><span class="num">${c.n}${c.auto ? ' · AUTO' : ''}</span></div>
+    <p class="meta-desc">${c.desc}</p>`;
+
+  const frag = tpl.content.cloneNode(true);
+  const frame = frag.querySelector('.frame');
+  frame.classList.add(c.id);
+  if (c.id === 'split') frame.classList.add('idle');
+  frame.dataset.state = 'before';
+  frame.querySelector('.scene').outerHTML = `<div class="scene" style="position:absolute;inset:0">${buildScene(c)}</div>`;
+  card.appendChild(frag);
+  grid.appendChild(card);
+
+  const setState = (state) => {
+    frame.dataset.state = state;
+    frame.querySelectorAll('[data-set]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.set === state)));
+    if (c.id === 'split') frame.classList.remove('idle');
+    if (c.id === 'wipe') {
+      frame.classList.add('moving');
+      setTimeout(() => frame.classList.remove('moving'), 1100);
+    }
+  };
+
+  frame.addEventListener('click', (e) => {
+    if (e.target.closest('[data-set]')) return;
+    const next = frame.dataset.state === 'before' ? 'after' : 'before';
+    setState(next);
+    if (c.auto) resetAuto(frame, c);
+  });
+  frame.querySelectorAll('[data-set]').forEach((b) => b.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setState(b.dataset.set);
+    if (c.auto) resetAuto(frame, c);
+  }));
+
+  if (c.auto && !reduceMotion) startAuto(frame, c);
+});
+
+function startAuto(frame, c) {
+  const bar = frame.querySelector('.auto-bar');
+  const interval = c.id === 'slides' ? 4500 : 4000;
+  let next = frame.dataset.state === 'before' ? 'after' : 'before';
+  frame._timer = setInterval(() => {
+    if (frame.matches(':hover') || frame._hidden) return;
+    frame.dataset.state = next;
+    frame.querySelectorAll('[data-set]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.set === next)));
+    next = next === 'before' ? 'after' : 'before';
+  }, interval);
+  timers.push(frame._timer);
+  if (bar) {
+    bar.animate([{ width: '0%' }, { width: '100%' }], { duration: interval, iterations: Infinity });
+  }
+}
+
+function resetAuto(frame, c) {
+  clearInterval(frame._timer);
+  startAuto(frame, c);
+}
+
+const io = new IntersectionObserver((entries) => {
+  entries.forEach((en) => { en.target._hidden = !en.isIntersecting; });
+});
+document.querySelectorAll('.frame').forEach((f) => io.observe(f));
+</script>
+</body>
+</html>

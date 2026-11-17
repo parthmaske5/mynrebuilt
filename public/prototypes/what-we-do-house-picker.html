@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What we do: house picker wireframe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --t:#17211C;
+  --border:#C3C9C0;
+  --surface-1:#E3E6E0;
+  --surface-2:#F2F4EF;
+  --text-secondary:#55625A;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --t:#E8ECE6;
+    --border:#2E3933;
+    --surface-1:#121815;
+    --surface-2:#1A221E;
+    --text-secondary:#9AA79F;
+  }
+}
+*{box-sizing:border-box}
+html{background:var(--surface-1);color:var(--t)}
+body{margin:0;padding:32px 20px 56px;font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;line-height:1.4}
+main{max-width:1000px;margin:0 auto}
+h2,h3{font-family:"Fraunces",Georgia,serif}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.w{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:16px;align-items:start}
+.hs{position:relative;border:0.5px solid var(--border);border-radius:12px;background:var(--surface-2);padding:8px;transition:filter .3s,opacity .3s}
+.hs svg{width:100%;display:block}
+.hs g[data-part]{cursor:pointer;fill:var(--p);transition:fill .25s,opacity .25s}
+.hs g[data-part].on{fill:var(--c)}
+.w.h .hs g[data-part]:not(.on){opacity:.28;filter:grayscale(1)}
+.w.n .hs{filter:grayscale(1);opacity:.4}
+.deco{pointer-events:none}
+.pt{position:absolute;width:44px;height:44px;margin:-22px 0 0 -22px;border:0;background:transparent;cursor:pointer;padding:0}
+.pt span.n{position:absolute;inset:9px;border-radius:50%;background:var(--surface-2);border:1.5px solid var(--t);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:var(--t);transition:background .25s}
+.pt.on span.n{background:var(--c);border-color:var(--c);color:#fff}
+.pt i{position:absolute;top:38px;left:50%;transform:translateX(-50%);font-style:normal;font-size:11px;white-space:nowrap;background:var(--surface-2);padding:0 3px;border-radius:3px;color:var(--t)}
+.pt:focus-visible span.n{outline:2px solid #378ADD;outline-offset:2px}
+.hint .pt span.n::after{content:'';position:absolute;inset:-1px;border-radius:50%;border:1.5px solid var(--t);animation:pl 2s ease-out infinite}
+@keyframes pl{0%{transform:scale(1);opacity:.6}100%{transform:scale(1.8);opacity:0}}
+.pn{border:0.5px solid var(--border);border-radius:12px;padding:0 0 14px;background:var(--surface-2);overflow:hidden}
+.chip{border:0.5px solid var(--border);background:transparent;border-radius:999px;padding:8px 14px;font:inherit;font-size:13px;cursor:pointer;margin:12px 16px 0;color:var(--t);min-height:36px}
+.chip.on{background:#3F6FA8;color:#fff;border-color:#3F6FA8}
+.band{margin:12px 0 0;padding:12px 16px;border-top:4px solid var(--bc,#999);background:var(--bt,transparent)}
+.band h3{margin:0;font-size:17px;font-weight:500}
+.band p{margin:4px 0 0;font-size:13px;color:var(--text-secondary)}
+.pl{padding:4px 16px 0}
+.pi{padding:8px 0;border-top:0.5px solid var(--border);font-size:14px}
+.pi:first-child{border-top:0}
+.pi small{color:var(--text-secondary);font-size:12px}
+.of{padding:9px 10px;border-top:0.5px solid var(--border);border-left:3px solid transparent}
+.of:first-child{border-top:0}
+.of b{display:block;font-weight:500;font-size:14px}
+.of span{font-size:13px;color:var(--text-secondary)}
+.of.fo{background:rgba(63,111,168,.14);border-left-color:#3F6FA8}
+.of.fo b{font-size:15px}
+.act{display:flex;gap:14px;align-items:center;margin:12px 16px 0;font-size:13px}
+.act b{background:var(--t);color:var(--surface-2);border-radius:999px;padding:9px 16px;font-weight:500}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:22px 0 10px;min-height:34px}
+.bar h2{margin:0;font-size:17px;font-weight:500}
+.bar button{border:0.5px solid var(--border);background:transparent;border-radius:999px;padding:6px 12px;font:inherit;font-size:12px;cursor:pointer;color:var(--t);min-height:32px}
+.fr{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.f{border:0.5px solid var(--border);border-radius:12px;background:var(--surface-2);padding:12px 14px}
+.f h3{margin:0;font-size:15px;font-weight:500}
+.f .sb{font-size:12px;color:var(--text-secondary);margin:2px 0 6px}
+.gl{font-size:12px;color:var(--text-secondary);margin:10px 0 2px}
+.r{padding:7px 6px;border-top:0.5px solid var(--border);font-size:13px;border-left:3px solid transparent}
+.r small{color:var(--text-secondary);font-size:11px}
+.r.dim{opacity:.5}
+.r.hit{font-weight:500}
+@media (prefers-reduced-motion:reduce){.hint .pt span.n::after{display:none}*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<h2 style="font-family: Fraunces, Georgia, serif; font-size: 24px; font-weight: 500; line-height: 1.35; margin: 0 0 20px; color: var(--t);">Pick a part of the house. See what we build and fix. Tap any part of the house to see our services from roof to foundation, or explore everything we do across quick fixes, inspections, and full builds.</h2>
+<div class="w hint" id="w">
+<div class="hs" id="hs">
+<svg viewBox="0 0 440 300" role="img" aria-label="Coloured line drawing of a house with eight tappable parts" stroke="var(--t)" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round">
+<g data-part="base" style="--c:#7B8794;--p:#DEE2E7"><rect x="90" y="250" width="220" height="24" stroke-dasharray="4 3"/></g>
+<g data-part="inside" style="--c:#E58F7F;--p:#F7DDD6"><rect x="90" y="130" width="220" height="120"/></g>
+<line class="deco" x1="90" y1="152" x2="310" y2="152" fill="none"/>
+<line class="deco" x1="200" y1="152" x2="200" y2="205" fill="none"/>
+<g data-part="roof" style="--c:#A9573F;--p:#EBCDC2"><polygon points="70,130 200,62 330,130"/><rect x="250" y="76" width="22" height="34"/></g>
+<g data-part="kitchen" style="--c:#D9A25F;--p:#F4E3C8"><rect x="100" y="215" width="70" height="35"/><rect x="104" y="160" width="62" height="20"/></g>
+<g data-part="doors" style="--c:#4C8FCC;--p:#D3E4F4"><rect x="186" y="205" width="28" height="45"/><rect x="232" y="166" width="34" height="22"/></g>
+<g data-part="bath" style="--c:#2FA08A;--p:#CFEAE3"><rect x="222" y="226" width="76" height="24"/></g>
+<g data-part="elec" style="--c:#F2C230;--p:#FBF1C2"><rect x="316" y="155" width="26" height="16"/><circle cx="200" cy="166" r="5"/><rect x="176" y="236" width="8" height="8"/></g>
+<g data-part="out" style="--c:#5E9E5A;--p:#D6E9D2"><rect x="345" y="215" width="55" height="35"/><polygon points="340,215 372,198 405,215"/></g>
+<line class="deco" x1="20" y1="250" x2="90" y2="250" fill="none"/>
+<line class="deco" x1="310" y1="250" x2="420" y2="250" fill="none"/>
+</svg></div>
+<div class="pn">
+<button class="chip" id="ng" type="button">Not a house? Offices, shops and sites</button>
+<div id="pc"></div>
+<div class="act"><b>Get a Quote</b><span>WhatsApp us</span></div>
+</div>
+</div>
+<div class="bar"><h2 id="bt">Everything we do</h2><button type="button" id="clr">Show all</button></div>
+<div class="fr" id="fr"></div>
+</main>
+<script>
+const C={roof:['#A9573F','Roof'],inside:['#E58F7F','Walls, floors and ceilings'],kitchen:['#D9A25F','Kitchen'],doors:['#4C8FCC','Doors and windows'],bath:['#2FA08A','Bathroom'],elec:['#F2C230','Electrical and climate'],out:['#5E9E5A','Outdoors'],base:['#7B8794','Structure and foundation'],non:['#3F6FA8','Not a house']};
+const T={q:['A quick job','Fix, replace or freshen up'],l:['Needs a look first','Inspection first, then a quote [confirm]'],b:['A big build','Real projects, shown as proof']};
+const S=[
+['q','Fix and replace','Heater installation',['elec'],''],
+['q','Fix and replace','Tile replacement and changes',['inside','bath','kitchen'],''],
+['q','Fix and replace','Window pane installation',['doors'],''],
+['q','Fix and replace','Door replacement',['doors'],''],
+['q','Fix and replace','Door and lock repairs',['doors'],'[confirm]'],
+['q','Fix and replace','Tap and pipe replacement',['bath','kitchen'],'[confirm]'],
+['q','Fix and replace','Ceiling repairs',['inside'],'[confirm]'],
+['q','Fix and replace','General handyman',['inside','kitchen','doors','bath','elec','out'],'[confirm]'],
+['q','Freshen up','Painting (rooms and minor jobs)',['inside'],''],
+['q','Freshen up','Wallpaper installation',['inside'],''],
+['q','Freshen up','LED lighting installation',['elec','inside'],'[confirm]'],
+['l','Water and electrics','Bathroom leak repair',['bath'],''],
+['l','Water and electrics','Leak detection',['bath','kitchen','inside'],'[confirm]'],
+['l','Water and electrics','Plumbing repairs',['bath','kitchen'],'[confirm]'],
+['l','Water and electrics','Electrical fault finding',['elec'],''],
+['l','Water and electrics','Electrical installation and repairs',['elec'],''],
+['l','Climate and power','AC installation',['elec'],''],
+['l','Climate and power','EV charger installation',['elec','out'],''],
+['l','Roofs and outdoors','Roof replacement',['roof'],''],
+['l','Roofs and outdoors','Custom roofs',['roof'],''],
+['l','Roofs and outdoors','Shed installation or replacement',['out'],''],
+['l','Building safety','Fire hydrant repair',['out','non'],'[confirm scope]'],
+['b','Build','Full home construction, from a blank site',['base','roof'],''],
+['b','Build','Pillar and structural construction',['base'],''],
+['b','Build','Extensions',['base','roof'],'[confirm]'],
+['b','Build','Construction supporting industrial machinery',['non'],''],
+['b','Renovate','Major house renovation',['inside','kitchen','bath','doors','roof'],''],
+['b','Renovate','Apartment renovation',['inside','kitchen','bath','doors'],''],
+['b','Renovate','Kitchen cabinets and renovation',['kitchen'],'[confirm renovation]'],
+['b','Renovate','Bathroom renovation',['bath'],'[confirm]'],
+['b','Renovate','Wall renovation',['inside'],''],
+['b','Renovate','Flooring',['inside'],'[confirm]'],
+['b','Renovate','Office renovation',['non'],''],
+['b','Large painting and signs','Major building painting',['non'],''],
+['b','Large painting and signs','Billboards, signboards and stickers',['non'],'[confirm current service]']];
+const OFF=[
+['Office renovation','A workspace your team will actually want to walk into.','',1],
+['Major building painting','A fresh face for the whole building.','',0],
+['Industrial groundwork','We build the base your machines stand on.','',0],
+['Signs and billboards','Signs that make your shopfront impossible to miss.','[confirm current service]',0],
+['Fire hydrant repair','Safety equipment kept in working order.','[confirm scope]',0]];
+const w=document.getElementById('w'),hs=document.getElementById('hs'),pc=document.getElementById('pc'),fr=document.getElementById('fr'),bt=document.getElementById('bt'),clr=document.getElementById('clr'),ng=document.getElementById('ng');
+let sel=null;
+const P=[['roof',200,92,'Roof'],['inside',130,150,'Walls, floors'],['kitchen',135,205,'Kitchen'],['doors',200,222,'Doors, windows'],['bath',262,200,'Bathroom'],['elec',326,160,'Electrical, AC'],['out',372,222,'Outdoors'],['base',200,272,'Structure']];
+const btns=[];
+P.forEach((p,i)=>{const b=document.createElement('button');b.type='button';b.className='pt';
+b.style.left=(p[1]/440*100)+'%';b.style.top=(p[2]/300*100)+'%';b.style.setProperty('--c',C[p[0]][0]);
+b.setAttribute('aria-label',C[p[0]][1]);b.innerHTML='<span class="n">'+(i+1)+'</span><i>'+p[3]+'</i>';
+b.onclick=e=>{e.stopPropagation();pick(p[0])};hs.appendChild(b);btns.push([p[0],b]);});
+function pick(k){sel=(sel===k)?null:k;render()}
+function reset(){sel=null;render()}
+ng.onclick=()=>pick('non');
+clr.onclick=reset;
+hs.addEventListener('click',e=>{
+const g=e.target.closest('[data-part]');
+if(g){pick(g.dataset.part);return}
+if(!e.target.closest('.pt'))reset()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')reset()});
+function fl(s){return s[4]?' <small>'+s[4]+'</small>':''}
+function panel(){
+if(!sel)return '<div class="band" style="--bc:var(--text-secondary)"><h3>Tap a part of the house</h3><p>See what we do from the roof down to the foundations.</p></div>';
+const col=C[sel][0];
+if(sel==='non'){
+let h='<div class="band" style="--bc:'+col+';--bt:'+col+'26"><h3>Not a house? We build for business too.</h3><p>Offices, shopfronts and industrial sites, built by our own crew with our own equipment.</p></div><div class="pl">';
+OFF.forEach(o=>{h+='<div class="of'+(o[3]?' fo':'')+'"><b>'+o[0]+(o[2]?' <small style="font-weight:400;color:var(--text-secondary)">'+o[2]+'</small>':'')+'</b><span>'+o[1]+'</span></div>'});
+return h+'</div><p style="margin:10px 16px 0;font-size:13px;color:var(--text-secondary)">Tell us about your space.</p>'}
+let h='<div class="band" style="--bc:'+col+';--bt:'+col+'26"><h3>'+C[sel][1]+'</h3></div><div class="pl">';
+S.filter(s=>s[3].includes(sel)).forEach(s=>{h+='<div class="pi">'+s[2]+fl(s)+'</div>'});
+return h+'</div>'}
+function row(s,hit,dim){
+const col=sel==='non'?'#3F6FA8':(sel?C[sel][0]:'');
+return '<div class="r'+(dim?' dim':'')+(hit?' hit':'')+'"'+(hit?' style="background:'+col+'26;border-left-color:'+col+'"':'')+'>'+s[2]+fl(s)+'</div>'}
+function frames(){
+let h='';
+['q','l','b'].forEach(t=>{
+const all=S.filter(s=>s[0]===t);
+h+='<div class="f"><h3>'+T[t][0]+'</h3><div class="sb">'+T[t][1]+'</div>';
+if(!sel){let g='';all.forEach(s=>{if(s[1]!==g){g=s[1];h+='<div class="gl">'+g+'</div>'}h+=row(s,false,false)})}
+else{
+const m=all.filter(s=>s[3].includes(sel)),o=all.filter(s=>!s[3].includes(sel));
+m.forEach(s=>h+=row(s,true,false));
+if(!m.length)h+='<div class="r dim"><small>Nothing here for this part</small></div>';
+if(o.length){h+='<div class="gl">Also in this track</div>';o.forEach(s=>h+=row(s,false,true))}}
+h+='</div>'});
+fr.innerHTML=h}
+function render(){
+w.classList.remove('hint');
+w.classList.toggle('h',!!sel&&sel!=='non');
+w.classList.toggle('n',sel==='non');
+hs.querySelectorAll('g[data-part]').forEach(g=>g.classList.toggle('on',g.dataset.part===sel));
+btns.forEach(x=>x[1].classList.toggle('on',x[0]===sel));
+ng.classList.toggle('on',sel==='non');
+pc.innerHTML=panel();
+bt.textContent=sel?('Sorted for: '+C[sel][1]):'Everything we do';
+clr.style.visibility=sel?'visible':'hidden';
+frames()}
+render();w.classList.add('hint');
+</script>
+</body>
+</html>

@@ -1,0 +1,1151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Portfolio: Split Showcase (Option C Prototype)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --cream-50: #FBF8F4;
+    --cream-100: #F7F2EB;
+    --cream-200: #EFE7D8;
+    --cream-300: #E4D6C0;
+    --ink-900: #1A1A1A;
+    --ink-700: #3D3D3D;
+    --ink-600: #525252;
+    --ink-500: #6B6B6B;
+    --marigold-100: #FFEDCC;
+    --marigold-300: #FFCB66;
+    --marigold-500: #F59E0B;
+    --marigold-800: #92480C;
+    --sage-100: #E6EAE0;
+    --sage-700: #424E36;
+    --blueprint-600: #2D5570;
+    --ease: cubic-bezier(.65, 0, .35, 1);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--cream-50);
+    color: var(--ink-900);
+    font-family: Inter, system-ui, sans-serif;
+    line-height: 1.5;
+  }
+  h1, h2, h3, h4 {
+    font-family: Fraunces, Georgia, serif;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  button { font: inherit; }
+
+  .wrap {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 48px 24px 96px;
+  }
+
+  .intro {
+    text-align: center;
+  }
+  .intro h1 {
+    font-size: clamp(30px, 4vw, 42px);
+    letter-spacing: -0.03em;
+    margin: 0 auto 8px;
+    max-width: 22ch;
+  }
+  .intro p {
+    margin: 0 auto;
+    color: var(--ink-600);
+    max-width: 58ch;
+    font-size: 15px;
+  }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .legend-pill {
+    font-size: 12px;
+    color: var(--ink-700);
+    background: var(--cream-200);
+    padding: 6px 14px;
+    border-radius: 999px;
+  }
+  .legend-pill.highlight {
+    background: var(--marigold-100);
+    color: var(--marigold-800);
+    font-weight: 600;
+  }
+  .legend-pill.sage {
+    background: var(--sage-100);
+    color: var(--sage-700);
+    font-weight: 600;
+  }
+
+  /* Option C: Unified split galleries container */
+  .galleries {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 36px;
+    margin-top: 36px;
+    background: var(--cream-100);
+    border: 1px solid var(--cream-300);
+    border-radius: 24px;
+    padding: 32px;
+  }
+  .column {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .column + .column {
+    border-left: 1px dashed var(--cream-300);
+    padding-left: 36px;
+  }
+
+  .col-head {
+    margin-bottom: 22px;
+    text-align: center;
+    max-width: 380px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .col-kicker {
+    display: none;
+  }
+  .col-head h2 {
+    font-size: 27px;
+    margin: 4px 0 6px;
+    letter-spacing: -0.02em;
+  }
+  .col-head p {
+    margin: 0;
+    color: var(--ink-600);
+    font-size: 14px;
+  }
+
+  /* Independent scrolling columns */
+  .scroll-col {
+    max-height: 960px;
+    overflow-y: auto;
+    padding-right: 10px;
+    margin-right: -6px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--cream-300) transparent;
+  }
+  .scroll-col::-webkit-scrollbar {
+    width: 6px;
+  }
+  .scroll-col::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scroll-col::-webkit-scrollbar-thumb {
+    background-color: var(--cream-300);
+    border-radius: 999px;
+  }
+
+  .view-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-900);
+    text-decoration: none;
+    border-bottom: 1.5px solid var(--marigold-500);
+    padding-bottom: 2px;
+    width: fit-content;
+  }
+  .view-all:hover {
+    color: var(--marigold-800);
+  }
+
+  /* Cards Shared */
+  .card {
+    position: relative;
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 1px 3px rgba(26,26,26,.06), 0 6px 18px rgba(26,26,26,.06);
+    transition: transform .45s cubic-bezier(.2,.7,.2,1), box-shadow .45s;
+    animation: rise .7s ease both;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 3px 6px rgba(26,26,26,.08), 0 16px 32px rgba(26,26,26,.12);
+  }
+
+  /* Major Works Layout (1 column per card, centered at compact width) */
+  .grid-major {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 430px;
+    margin: 0 auto;
+  }
+  .major .card .img-wrap {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--cream-200);
+    cursor: pointer;
+  }
+  .major .card .body {
+    padding: 16px 18px 18px;
+  }
+  .major .card h3 {
+    font-size: 18px;
+    margin-bottom: 6px;
+    line-height: 1.25;
+  }
+  .major .card p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--ink-600);
+    line-height: 1.45;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .major .card .meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid var(--cream-100);
+  }
+  .major .card .chip-tag {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--sage-700);
+    background: var(--sage-100);
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+  .major .card .cta-btn {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-900);
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .major .card .cta-btn:hover {
+    color: var(--marigold-800);
+  }
+
+  /* Before / After Frame on All Major Cards */
+  .ba {
+    position: absolute;
+    inset: 0;
+    isolation: isolate;
+  }
+  .ba .layer {
+    position: absolute;
+    inset: 0;
+    transition: opacity .65s ease;
+  }
+  .ba .layer img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 1.2s cubic-bezier(.2,.7,.2,1);
+  }
+  .card:hover .ba .layer img {
+    transform: scale(1.04);
+  }
+  .ba .layer-before {
+    opacity: 0;
+    z-index: 1;
+  }
+  .ba .layer-after {
+    opacity: 1;
+    z-index: 2;
+  }
+  .ba[data-state="before"] .layer-before {
+    opacity: 1;
+    z-index: 2;
+  }
+  .ba[data-state="before"] .layer-after {
+    opacity: 0;
+    z-index: 1;
+  }
+
+  /* Floating Tag & Toggle on Major Cards */
+  .chip-category {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 6;
+    background: rgba(251,248,244,.94);
+    color: var(--ink-900);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 11px;
+    border-radius: 999px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.1);
+    pointer-events: none;
+  }
+
+  .ba-ind {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 7;
+    display: inline-flex;
+    background: rgba(26,26,26,.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 999px;
+    padding: 3px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.2);
+  }
+  .ba-ind button {
+    all: unset;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    padding: 4px 12px;
+    border-radius: 999px;
+    color: rgba(251,248,244,.85);
+    transition: background .25s ease, color .25s ease;
+  }
+  .ba-ind button[aria-pressed="true"] {
+    background: var(--cream-50);
+    color: var(--ink-900);
+    box-shadow: 0 1px 4px rgba(0,0,0,.2);
+  }
+  .ba-ind button:focus-visible {
+    outline: 2px solid var(--marigold-500);
+    outline-offset: 2px;
+  }
+
+  .tap-hint {
+    position: absolute;
+    bottom: 12px;
+    left: 14px;
+    z-index: 6;
+    background: rgba(26,26,26,.65);
+    backdrop-filter: blur(6px);
+    color: var(--cream-50);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 999px;
+    pointer-events: none;
+    opacity: 0.85;
+    transition: opacity .3s;
+  }
+  .card:hover .tap-hint {
+    opacity: 1;
+  }
+
+  /* Small Works Layout (Option C: 2-column square grid, 1:1 aspect ratio) */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .small .card .img-wrap {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: var(--cream-200);
+    cursor: pointer;
+  }
+  .small .card .img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .8s cubic-bezier(.2,.7,.2,1);
+  }
+  .small .card:hover .img-wrap img {
+    transform: scale(1.06);
+  }
+  .small .card .body {
+    padding: 13px 14px 15px;
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 100%);
+  }
+  .small .card h3 {
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+  .small .card p {
+    margin: 0 0 10px;
+    font-size: 12px;
+    color: var(--ink-600);
+    line-height: 1.45;
+  }
+  .small .card .meta-row {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 8px;
+    border-top: 1px solid var(--cream-100);
+  }
+  .small .card .tag {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--sage-700);
+    background: var(--sage-100);
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+  .small .card .cta-enquire {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-900);
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+  .small .card .cta-enquire:hover {
+    color: var(--marigold-800);
+  }
+
+  /* Mandatory Circular Price Badge for Small Works */
+  .price-badge {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    z-index: 5;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--marigold-500);
+    color: var(--ink-900);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 0 4px 14px rgba(26,26,26,.22), 0 0 0 3px rgba(251,248,244,.95);
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.1;
+    transition: transform .35s cubic-bezier(.2,.7,.2,1);
+    pointer-events: none;
+  }
+  .small .card:hover .price-badge {
+    transform: scale(1.1);
+  }
+  .price-badge .unit {
+    font-size: 8px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    font-weight: 600;
+    opacity: 0.85;
+  }
+  .price-badge .amt {
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  /* Demo Strip */
+  .demo-head {
+    margin-top: 72px;
+  }
+  .demo-head h2 {
+    font-size: 27px;
+  }
+  .demo-head p {
+    margin: 8px 0 0;
+    color: var(--ink-600);
+    font-size: 14px;
+    max-width: 72ch;
+  }
+  .demo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+    margin-top: 24px;
+  }
+  .demo-tile {
+    background: #fff;
+    border-radius: 16px;
+    padding: 14px;
+    box-shadow: 0 1px 2px rgba(26,26,26,.06), 0 6px 18px rgba(26,26,26,.06);
+  }
+  .demo-tile .frame {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--cream-200);
+    cursor: pointer;
+  }
+  .demo-tile h3 {
+    font-size: 16px;
+    margin: 12px 2px 2px;
+  }
+  .demo-tile p {
+    margin: 0 2px;
+    font-size: 12.5px;
+    color: var(--ink-600);
+  }
+
+  .fx-crossfade .layer { transition: opacity 1s ease; }
+  .fx-crossfade .lb { opacity: 1; }
+  .fx-crossfade .la { opacity: 0; }
+  .fx-crossfade[data-state="after"] .lb { opacity: 0; }
+  .fx-crossfade[data-state="after"] .la { opacity: 1; }
+
+  .fx-wipe .la { clip-path: polygon(0 0, 0 0, 0 100%, 0 100%); transition: clip-path 1.1s var(--ease); }
+  .fx-wipe[data-state="after"] .la { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+
+  .fx-split .la { clip-path: inset(0 0 0 0); }
+  .fx-split .lb { clip-path: inset(0 calc(100% - var(--pos, 50%)) 0 0); transition: clip-path .9s var(--ease); }
+  .fx-split .divider { position: absolute; top: 0; bottom: 0; width: 2px; background: #fff; z-index: 3; left: var(--pos, 50%); transition: left .9s var(--ease); box-shadow: 0 0 10px rgba(0,0,0,.25); transform: translateX(-1px); }
+  .fx-split .divider::after { content: ""; position: absolute; top: 50%; left: 50%; width: 28px; height: 28px; margin: -14px; border-radius: 50%; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.2); }
+  .fx-split[data-state="after"] { --pos: 0%; }
+  .fx-split[data-state="before"] { --pos: 100%; }
+  .fx-split.idle .lb { animation: split-sweep 7s var(--ease) infinite alternate; }
+  .fx-split.idle .divider { animation: split-line 7s var(--ease) infinite alternate; }
+  @keyframes split-sweep { from { clip-path: inset(0 70% 0 0); } to { clip-path: inset(0 30% 0 0); } }
+  @keyframes split-line { from { left: 70%; } to { left: 30%; } }
+
+  .fx-zoom .lb { transition: transform 1.2s var(--ease), opacity 1.2s var(--ease); transform: scale(1); opacity: 1; }
+  .fx-zoom .la { transition: transform 1.2s var(--ease), opacity 1.2s var(--ease); transform: scale(1.15); opacity: 0; }
+  .fx-zoom[data-state="after"] .lb { transform: scale(1.15); opacity: 0; }
+  .fx-zoom[data-state="after"] .la { transform: scale(1); opacity: 1; }
+
+  .fx-vertical .la { clip-path: inset(0 0 100% 0); transition: clip-path 1.1s var(--ease); }
+  .fx-vertical[data-state="after"] .la { clip-path: inset(0 0 0 0); }
+
+  .fx-flip { perspective: 1200px; }
+  .fx-flip .inner { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform 1s var(--ease); }
+  .fx-flip[data-state="after"] .inner { transform: rotateX(180deg); }
+  .fx-flip .face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+  .fx-flip .face.back { transform: rotateX(180deg); }
+
+  /* Detail Dialog Modal */
+  dialog {
+    border: 0;
+    padding: 0;
+    border-radius: 20px;
+    width: min(880px, calc(100vw - 32px));
+    max-height: calc(100vh - 32px);
+    background: var(--cream-50);
+    color: var(--ink-900);
+    box-shadow: 0 30px 80px rgba(26,26,26,.35);
+  }
+  dialog::backdrop {
+    background: rgba(26,26,26,.55);
+    backdrop-filter: blur(4px);
+  }
+  dialog[open] {
+    animation: dlg .45s cubic-bezier(.2,.7,.2,1);
+  }
+  @keyframes dlg {
+    from { opacity: 0; transform: translateY(16px) scale(.98); }
+    to { opacity: 1; transform: none; }
+  }
+  .dlg-photo {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--cream-200);
+  }
+  .dlg-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .dlg-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 10;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 0;
+    background: rgba(251,248,244,.95);
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+    color: var(--ink-900);
+    box-shadow: 0 2px 8px rgba(0,0,0,.15);
+  }
+  .dlg-body {
+    padding: 28px 32px 32px;
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 28px;
+  }
+  .dlg-body h2 {
+    font-size: 28px;
+  }
+  .dlg-body h3 {
+    font-size: 14px;
+    font-family: Inter, sans-serif;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    margin: 18px 0 6px;
+    color: var(--sage-700);
+  }
+  .dlg-body p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--ink-600);
+    line-height: 1.5;
+  }
+  .dlg-price-box {
+    background: var(--cream-100);
+    border: 1px solid var(--cream-300);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  .dlg-price-val {
+    font-family: Fraunces, Georgia, serif;
+    font-size: 26px;
+    color: var(--marigold-800);
+    font-weight: 600;
+    margin: 4px 0 2px;
+  }
+  .wa {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--ink-900);
+    color: var(--cream-50);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 13px 22px;
+    border-radius: 999px;
+    width: 100%;
+    transition: background .3s;
+  }
+  .wa:hover {
+    background: var(--ink-700);
+  }
+
+  .note {
+    margin-top: 36px;
+    font-size: 13.5px;
+    color: var(--ink-700);
+    background: var(--marigold-100);
+    border-radius: 12px;
+    padding: 14px 18px;
+    line-height: 1.5;
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @media (max-width: 960px) {
+    .galleries {
+      grid-template-columns: 1fr;
+      padding: 24px;
+      gap: 32px;
+    }
+    .column + .column {
+      border-left: 0;
+      padding-left: 0;
+      border-top: 1px dashed var(--cream-300);
+      padding-top: 32px;
+    }
+    .scroll-col {
+      max-height: none;
+      overflow: visible;
+      padding-right: 0;
+      margin-right: 0;
+    }
+    .demo-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .wrap { padding: 32px 16px 64px; }
+    .galleries { padding: 18px; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .grid-major { grid-template-columns: 1fr; }
+    .demo-grid { grid-template-columns: 1fr; }
+    .dlg-body { grid-template-columns: 1fr; padding: 20px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation: none !important;
+      transition-duration: .01ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="intro">
+    <h1>Portfolio: Two Independent Galleries</h1>
+    <p>Option C Split Showcase. Major Works feature full-aspect 4:3 cards with interactive before-and-after photo toggles and no pricing. Small Works are arranged in a 2-column square grid with verified standard job pricing on every card.</p>
+    <div class="legend">
+      <span class="legend-pill sage">Major Works: Before &amp; After Photo Toggle</span>
+      <span class="legend-pill highlight">Small Works: Transparent Pricing on All Minor Jobs</span>
+      <span class="legend-pill">Independent Scroll on Desktop</span>
+    </div>
+  </header>
+
+  <div class="galleries">
+    <!-- MAJOR WORKS COLUMN (Option C) -->
+    <section class="column major" aria-labelledby="major-heading">
+      <div class="col-head">
+        <div class="col-kicker">Major Works</div>
+        <h2 id="major-heading">Construction &amp; Renovation</h2>
+        <p>Full builds, structural renovations, and architectural overhauls. Tap any photo or use the BEFORE/AFTER switch to inspect progress.</p>
+      </div>
+      <div class="scroll-col">
+        <div class="grid-major" id="major-list"></div>
+      </div>
+      <a class="view-all" href="#">View all Major Works &rarr;</a>
+    </section>
+
+    <!-- SMALL WORKS COLUMN (Option C) -->
+    <section class="column small" aria-labelledby="small-heading">
+      <div class="col-head">
+        <div class="col-kicker">Small Works</div>
+        <h2 id="small-heading">Repairs &amp; Maintenance</h2>
+        <p>Direct trades, fast dispatch, and standard upfront pricing for everyday property maintenance.</p>
+      </div>
+      <div class="scroll-col">
+        <div class="grid-2" id="small-list"></div>
+      </div>
+      <a class="view-all" href="#">View all Small Works &rarr;</a>
+    </section>
+  </div>
+
+  <!-- BEFORE/AFTER MOTION EXAMPLES -->
+  <div class="demo-head">
+    <h2>Before-and-after motion styles</h2>
+    <p>Alternative transition effects tested for before-and-after reveals. Click any frame or use BEFORE / AFTER to switch between states.</p>
+  </div>
+  <div class="demo-grid" id="demo-grid"></div>
+
+  <p class="note"><strong>Interactive Note:</strong> On desktop, both the Major Works and Small Works columns scroll independently to keep navigation compact. On mobile and tablet, columns stack naturally for easy vertical browsing.</p>
+</div>
+
+<!-- PROJECT DETAIL DIALOG -->
+<dialog id="detail">
+  <button class="dlg-close" type="button" aria-label="Close" data-close>&times;</button>
+  <div class="dlg-photo"><img id="dlg-img" alt="" /></div>
+  <div class="dlg-body">
+    <div>
+      <div class="col-kicker" id="dlg-cat"></div>
+      <h2 id="dlg-title" style="margin-top:6px"></h2>
+      <h3>Project overview</h3>
+      <p id="dlg-overview"></p>
+      <h3>Work completed</h3>
+      <p id="dlg-scope"></p>
+      <h3>Handover &amp; outcome</h3>
+      <p id="dlg-outcome"></p>
+    </div>
+    <div>
+      <div class="dlg-price-box">
+        <div class="col-kicker" id="dlg-price-kicker">Estimated Rate</div>
+        <div class="dlg-price-val" id="dlg-price-val"></div>
+        <p id="dlg-price-note" style="font-size:12px;margin:0;color:var(--ink-600)"></p>
+      </div>
+      <a class="wa" id="dlg-wa" href="#" target="_blank" rel="noopener">Enquire on WhatsApp &rarr;</a>
+    </div>
+  </div>
+</dialog>
+
+<script>
+// Pexels photo helper
+const px = (id) => `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&h=650&w=940`;
+
+// ALL MAJOR WORKS: Have BEFORE and AFTER toggles. NO pricing.
+const majorProjects = [
+  {
+    id: 'office-renovation',
+    title: 'Commercial Office Renovation',
+    cat: 'Renovation',
+    desc: 'Complete corporate office remodel with acoustic slatted timber partitions, executive boardrooms, and concealed ambient LED lighting.',
+    afterImg: 'https://images.pexels.com/photos/5505931/pexels-photo-5505931.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+    beforeImg: 'https://images.pexels.com/photos/14840813/pexels-photo-14840813.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+    overview: 'Full commercial workspace transformation to optimize open-plan collaboration while adding private meeting zones.',
+    scope: 'Partition framing, acoustic ceiling treatment, commercial grade vinyl plank flooring, high-efficiency HVAC ducts, and custom joinery.',
+    outcome: 'Turnkey handover delivered on schedule with zero operational downtime for adjacent office suites.'
+  },
+  {
+    id: 'full-house-construction',
+    title: 'Full House Ground-Up Construction',
+    cat: 'Construction',
+    desc: 'Ground-up residential build including reinforced concrete foundation, steel structural columns, brickwork, and multi-tier roof framing.',
+    afterImg: px('323780'),
+    beforeImg: px('31197870'),
+    overview: 'Complete single-family turnkey residence constructed from bare ground through structural sign-off to interior finish.',
+    scope: 'Sub-structure piling, structural beam and slab casting, exterior perimeter masonry, electrical conduits, and roofing.',
+    outcome: 'Solid structural build passing all local council engineering approvals with comprehensive structural warranty.'
+  },
+  {
+    id: 'roof-replacement',
+    title: 'Full Building Roof Replacement',
+    cat: 'Roofing',
+    desc: 'Structural tear-off of aged timber trusses, installation of treated light-gauge steel framing, heavy-duty underlayment, and slate tiles.',
+    afterImg: px('259588'),
+    beforeImg: px('34524716'),
+    overview: 'Extensive roof rehabilitation addressing deep weathering, structural sagging, and recurrent water ingress.',
+    scope: 'Old tile removal, decayed rafter reinforcement, breathable moisture barrier membrane, colorbond gutters, and valley flashing.',
+    outcome: 'Fully certified watertight roof envelope with enhanced thermal insulation and 10-year weatherproofing guarantee.'
+  },
+  {
+    id: 'kitchen-renovation',
+    title: 'Open-Concept Kitchen Renovation',
+    cat: 'Renovation',
+    desc: 'Structural wall removal creating an airy flow between culinary and living spaces with quartz counters and custom cabinetry.',
+    afterImg: px('8146144'),
+    beforeImg: px('2724749'),
+    overview: 'Transforming an outdated, enclosed kitchen into a bright, contemporary social hub.',
+    scope: 'Load-bearing lintel installation, new island plumbing and gas runs, bespoke soft-close cabinetry, and integrated splashbacks.',
+    outcome: 'Spacious, high-efficiency layout that significantly boosted everyday functionality and property market valuation.'
+  },
+  {
+    id: 'building-painting',
+    title: 'Major Building Exterior Painting',
+    cat: 'Painting',
+    desc: 'High-access pressure washing, elastomeric crack repair, fungicidal wash, and multi-coat weatherproof architectural coating.',
+    afterImg: px('323775'),
+    beforeImg: px('31608473'),
+    overview: 'Complete exterior facade rejuvenation for a multi-storey estate suffering from chalking paint and hairline cracking.',
+    scope: 'Mobile scaffolding access, perimeter joint sealant replacement, alkali-resistant primer, and two coats of weatherproof exterior finish.',
+    outcome: 'Vibrant, long-lasting exterior curb appeal with UV resistance and mold protection.'
+  },
+  {
+    id: 'house-extension',
+    title: 'Rear House Extension & Covered Living',
+    cat: 'Construction',
+    desc: 'Single-storey expansion integrating indoor living with an all-weather outdoor patio deck, structural glazing, and electrical tie-in.',
+    afterImg: px('1396122'),
+    beforeImg: px('17290735'),
+    overview: 'Expanding living footprint to accommodate growing family needs without sacrificing backyard aesthetic.',
+    scope: 'Foundation excavation, tie-in with main building slab, thermally broken double-glazed sliders, and concealed rainwater downpipes.',
+    outcome: 'Seamless indoor-outdoor lifestyle space added with flawless transition from the existing home structure.'
+  }
+];
+
+// ALL SMALL / MINOR WORKS: ALL MUST HAVE PRICING!
+const smallProjects = [
+  {
+    id: 'plumbing-repairs',
+    title: 'Plumbing Repairs & Pipework',
+    cat: 'Plumbing',
+    price: 'RM 150',
+    desc: 'Leak detection, concealed pipe repair, pressure valve replacements, and drain unclogging.',
+    img: px('19866415'),
+    overview: 'Fast-dispatch plumbing diagnostic and repair service for residential and commercial units.',
+    scope: 'Pressure testing, pipe joint resealing, fixture replacement, and leak isolation.',
+    outcome: 'Watertight repair with 30-day workmanship guarantee.'
+  },
+  {
+    id: 'water-leakage',
+    title: 'Water Leakage & Waterproofing',
+    cat: 'Waterproofing',
+    price: 'RM 280',
+    desc: 'Polyurethane chemical grouting, floor slab injection, and waterproof sealant reinstatement.',
+    img: px('32998547'),
+    overview: 'Specialist non-destructive moisture leak remediation for bathrooms, balconies, and slabs.',
+    scope: 'Thermal imaging leak localization, PU high-pressure injection, and silicone perimeter sealing.',
+    outcome: 'Permanent leak stoppage without costly tile hacking.'
+  },
+  {
+    id: 'electrical-troubleshooting',
+    title: 'Electrical Wiring & Troubleshooting',
+    cat: 'Electrical',
+    price: 'RM 180',
+    desc: 'Tripping circuit diagnosis, distribution board check, socket replacement, and lighting circuits.',
+    img: px('3614763'),
+    overview: 'Safety-certified electrical inspection and urgent fault restoration by licensed wiremen.',
+    scope: 'Faulty breaker replacement, earth loop impedance check, short circuit rectification, and rewiring.',
+    outcome: 'Certified safe electrical system with renewed circuit labeling.'
+  },
+  {
+    id: 'door-lock-repairs',
+    title: 'Door & Lock Repairs',
+    cat: 'Carpentry',
+    price: 'RM 120',
+    desc: 'Door sagging realignment, mortise lock replacement, hinge truing, and handle hardware upgrades.',
+    img: px('5691502'),
+    overview: 'Restoring smooth latching, proper clearance, and reliable security hardware on internal and main doors.',
+    scope: 'Frame adjustment, hinge shimming, strike plate repositioning, and precision lock cylinder fitting.',
+    outcome: 'Smooth, secure closing action with zero door binding or rubbing.'
+  },
+  {
+    id: 'tap-pipe-replacement',
+    title: 'Tap & Mixer Replacement',
+    cat: 'Plumbing',
+    price: 'RM 140',
+    desc: 'Supply and installation of kitchen mixer taps, basin faucets, angle valves, and flexible hoses.',
+    img: px('34938442'),
+    overview: 'Quick replacement of corroded, dripping, or low-pressure taps and sanitary fittings.',
+    scope: 'Old fixture removal, Teflon thread sealing, supply line connection, and flow test.',
+    outcome: 'Clean, drip-free fixture installation tested at full working pressure.'
+  },
+  {
+    id: 'room-painting',
+    title: 'Room Accent & Touch-up Painting',
+    cat: 'Painting',
+    price: 'RM 380',
+    desc: 'Single room wall repaint, plaster hole patching, baseboard trim edging, and low-VOC finish.',
+    img: px('6764270'),
+    overview: 'Rapid turnaround interior room refresh ideal for rental handovers or feature wall upgrades.',
+    scope: 'Surface sanding, hairline crack filler, floor and furniture masking, and two coats of premium paint.',
+    outcome: 'Crisp, streak-free walls with clean lines and zero paint splatter.'
+  },
+  {
+    id: 'tile-repair',
+    title: 'Floor Tile Repair & Regrouting',
+    cat: 'Masonry',
+    price: 'RM 320',
+    desc: 'Hollow floor tile replacement, epoxy mold-resistant regrouting, and chipped edge repairs.',
+    img: px('5691515'),
+    overview: 'Targeted tile restoration that eliminates popping or cracked tiles without renovating the whole room.',
+    scope: 'Careful cracked tile extraction, adhesive bed prep, color-matched tile setting, and epoxy grout.',
+    outcome: 'Solid, uniform floor surface restored flush with existing adjacent tiles.'
+  },
+  {
+    id: 'water-heater',
+    title: 'Water Heater Install & Safety Test',
+    cat: 'Electrical',
+    price: 'RM 220',
+    desc: 'Instant water heater unit mounting, dedicated 20A isolator switch check, and plumbing hookup.',
+    img: 'https://images.pexels.com/photos/14840813/pexels-photo-14840813.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+    overview: 'Safe and compliant installation of domestic electric shower water heaters.',
+    scope: 'Wall anchor mounting, RCCB safety circuit test, inlet filter attachment, and shower rail alignment.',
+    outcome: 'Fully grounded and operational water heater unit ready for immediate safe usage.'
+  }
+];
+
+// Render Major Works Cards (Option C: 4:3 frame, Before/After toggle, NO PRICING)
+function renderMajorCard(p) {
+  return `
+    <article class="card major-card" data-id="${p.id}" data-type="major">
+      <div class="img-wrap" data-toggle-img>
+        <span class="chip-category">${p.cat}</span>
+        
+        <div class="ba" data-state="after">
+          <div class="layer layer-before">
+            <img src="${p.beforeImg}" alt="${p.title} before" loading="lazy" />
+          </div>
+          <div class="layer layer-after">
+            <img src="${p.afterImg}" alt="${p.title} after" loading="lazy" />
+          </div>
+        </div>
+
+        <div class="ba-ind" role="group" aria-label="Show before or after">
+          <button type="button" data-set="before" aria-pressed="false">BEFORE</button>
+          <button type="button" data-set="after" aria-pressed="true">AFTER</button>
+        </div>
+
+        <div class="tap-hint">Tap photo to toggle</div>
+      </div>
+
+      <div class="body">
+        <h3>${p.title}</h3>
+        <p>${p.desc}</p>
+        <div class="meta-row">
+          <span class="chip-tag">${p.cat} &middot; Major Scope</span>
+          <button type="button" class="cta-btn" data-open-dlg>View Project Scope &rarr;</button>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+// Render Small Works Cards (Option C: 1:1 square frame, MANDATORY PRICING BADGE)
+function renderSmallCard(p) {
+  return `
+    <article class="card small-card" data-id="${p.id}" data-type="small">
+      <div class="img-wrap" data-open-dlg>
+        <img src="${p.img}" alt="${p.title}" loading="lazy" />
+        <div class="price-badge" title="Standard job rate">
+          <span class="unit">From</span>
+          <span class="amt">${p.price}</span>
+        </div>
+      </div>
+
+      <div class="body">
+        <h3>${p.title}</h3>
+        <p>${p.desc}</p>
+        <div class="meta-row">
+          <span class="tag">${p.cat}</span>
+          <button type="button" class="cta-enquire" data-open-dlg>Details &rarr;</button>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+// Mount Cards
+document.getElementById('major-list').innerHTML = majorProjects.map(renderMajorCard).join('');
+document.getElementById('small-list').innerHTML = smallProjects.map(renderSmallCard).join('');
+
+// Before / After Toggle Handling on Major Works
+document.querySelectorAll('.major-card').forEach((card) => {
+  const ba = card.querySelector('.ba');
+  const buttons = card.querySelectorAll('[data-set]');
+  const imgWrap = card.querySelector('[data-toggle-img]');
+
+  const setState = (state) => {
+    ba.dataset.state = state;
+    buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.set === state)));
+  };
+
+  // Clicking BEFORE / AFTER buttons directly
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      setState(btn.dataset.set);
+    });
+  });
+
+  // Clicking on the photo itself toggles between before and after
+  imgWrap.addEventListener('click', (e) => {
+    if (e.target.closest('[data-set]')) return;
+    const currentState = ba.dataset.state;
+    const nextState = currentState === 'before' ? 'after' : 'before';
+    setState(nextState);
+  });
+});
+
+// Demo Before & After Motion Strip (Educational Comparison)
+const demos = [
+  { style: 'crossfade', name: 'Crossfade', desc: 'Photos dissolve gently into each other.' },
+  { style: 'wipe', name: 'Wipe Reveal', desc: 'A moving reveal sweeps across the finished room.' },
+  { style: 'split', name: 'Split Divider', desc: 'Sliding split comparison across both images.' },
+  { style: 'zoom', name: 'Zoom Transition', desc: 'Before pulls back while finished view zooms in.' },
+  { style: 'vertical', name: 'Vertical Reveal', desc: 'Finished photo unrolls from top to bottom.' },
+  { style: 'flip', name: '3D Flip', desc: 'The frame turns over like a printed photo.' }
+];
+
+const DEMO_BEFORE = 'https://images.pexels.com/photos/14840813/pexels-photo-14840813.jpeg?auto=compress&cs=tinysrgb&h=650&w=940';
+const DEMO_AFTER = 'https://images.pexels.com/photos/5505931/pexels-photo-5505931.jpeg?auto=compress&cs=tinysrgb&h=650&w=940';
+
+document.getElementById('demo-grid').innerHTML = demos.map((d) => `
+  <div class="demo-tile">
+    <div class="frame">
+      <div class="ba fx-${d.style}${d.style === 'split' ? ' idle' : ''}" data-state="after" style="position:absolute;inset:0">
+        ${d.style === 'flip'
+          ? `<div class="inner"><div class="face"><img src="${DEMO_BEFORE}" alt="Before" style="width:100%;height:100%;object-fit:cover" /></div><div class="face back"><img src="${DEMO_AFTER}" alt="After" style="width:100%;height:100%;object-fit:cover" /></div></div>`
+          : `<div class="layer lb"><img src="${DEMO_BEFORE}" alt="Before" loading="lazy" /></div>
+             <div class="layer la"><img src="${DEMO_AFTER}" alt="After" loading="lazy" /></div>
+             ${d.style === 'split' ? '<div class="divider"></div>' : ''}`}
+        <div class="ba-ind" role="group" aria-label="Demo before or after">
+          <button type="button" data-demo-set="before" aria-pressed="false">BEFORE</button>
+          <button type="button" data-demo-set="after" aria-pressed="true">AFTER</button>
+        </div>
+      </div>
+    </div>
+    <h3>${d.name}</h3>
+    <p>${d.desc}</p>
+  </div>
+`).join('');
+
+document.querySelectorAll('.demo-tile').forEach((tile) => {
+  const frame = tile.querySelector('.ba');
+  const buttons = tile.querySelectorAll('[data-demo-set]');
+
+  const setDemoState = (state) => {
+    frame.dataset.state = state;
+    buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.demoSet === state)));
+    frame.classList.remove('idle');
+  };
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      setDemoState(btn.dataset.demoSet);
+    });
+  });
+
+  tile.querySelector('.frame').addEventListener('click', (e) => {
+    if (e.target.closest('[data-demo-set]')) return;
+    setDemoState(frame.dataset.state === 'before' ? 'after' : 'before');
+  });
+});
+
+// Modal Dialog Details
+const dialog = document.getElementById('detail');
+
+function openProjectModal(item, isMajor) {
+  document.getElementById('dlg-img').src = isMajor ? item.afterImg : item.img;
+  document.getElementById('dlg-img').alt = item.title;
+  document.getElementById('dlg-cat').textContent = item.cat;
+  document.getElementById('dlg-title').textContent = item.title;
+  document.getElementById('dlg-overview').textContent = item.overview;
+  document.getElementById('dlg-scope').textContent = item.scope;
+  document.getElementById('dlg-outcome').textContent = item.outcome;
+
+  const kickerEl = document.getElementById('dlg-price-kicker');
+  const valEl = document.getElementById('dlg-price-val');
+  const noteEl = document.getElementById('dlg-price-note');
+
+  if (isMajor) {
+    kickerEl.textContent = 'Project Scope Pricing';
+    valEl.textContent = 'Tailored Quotation';
+    noteEl.textContent = 'Exact pricing provided upon site survey and blueprint evaluation. Zero hidden fees.';
+  } else {
+    kickerEl.textContent = 'Standard Job Rate';
+    valEl.textContent = item.price;
+    noteEl.textContent = 'Transparent standard rate. Covers standard diagnostic, replacement labor, and 30-day warranty.';
+  }
+
+  const waMsg = encodeURIComponent(`Hi, I'm interested in inquiring about ${item.title} (${isMajor ? 'Major Work' : 'Small Job: ' + item.price}).`);
+  document.getElementById('dlg-wa').href = `https://wa.me/?text=${waMsg}`;
+
+  dialog.showModal();
+}
+
+// Bind clicks to open modal
+document.querySelectorAll('[data-open-dlg]').forEach((btn) => {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const card = btn.closest('.card');
+    const id = card.dataset.id;
+    const isMajor = card.dataset.type === 'major';
+    const item = isMajor
+      ? majorProjects.find((p) => p.id === id)
+      : smallProjects.find((p) => p.id === id);
+    if (item) openProjectModal(item, isMajor);
+  });
+});
+
+dialog.querySelector('[data-close]').addEventListener('click', () => dialog.close());
+dialog.addEventListener('click', (e) => {
+  if (e.target === dialog) dialog.close();
+});
+</script>
+</body>
+</html>
